@@ -3,6 +3,7 @@
 
 #include "../ShadeLibrary/Common.hlsl"
 #include "../ShadeLibrary/Surface.hlsl"
+#include "../ShadeLibrary/Lighting.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
