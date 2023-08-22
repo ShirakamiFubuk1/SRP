@@ -56,7 +56,7 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
     #endif
 
-    base.rgb = input.normalWS;
+    base.rgb = normalize(input.normalWS);
     
     return base;
 }
