@@ -7,6 +7,8 @@ public partial class CameraRenderer
 
     Camera camera;
 
+    Lighting lighting = new Lighting();
+
     const string bufferName = "Render Camera";
 
     CommandBuffer buffer = new CommandBuffer()
@@ -33,6 +35,7 @@ public partial class CameraRenderer
         }
 
         Setup();
+        lighting.Setup(context);
         DrawVisibleGeometry(useDynamicBatching,useGPUInstancing);
         DrawUnsupportedShaders();
         DrawGizmos();
