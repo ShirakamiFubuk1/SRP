@@ -3,18 +3,22 @@ using UnityEngine.Rendering;
 
 public class CustomRenderPipeline : RenderPipeline
 {
-    private CameraRenderer renderer = new CameraRenderer();
+    CameraRenderer renderer = new CameraRenderer();
 
-    public CustomRenderPipeline()
+    bool useDynamicBatching, useGPUInstancing;
+
+    public CustomRenderPipeline(bool useDynamicBatching,bool useGPUInstancing,bool useSRPBatcher)
     {
-        GraphicsSettings.useScriptableRenderPipelineBatching = true;
+        this.useDynamicBatching = useDynamicBatching;
+        this.useGPUInstancing = useGPUInstancing;
+        GraphicsSettings.useScriptableRenderPipelineBatching = useSRPBatcher;
     }
     
     protected override void Render(ScriptableRenderContext context,Camera[] cameras)
     {
-        foreach (var camera in cameras)
+        foreach (Camera camera in cameras)
         {
-            renderer.Render(context,camera);
+            renderer.Render(context,camera,useDynamicBatching,useGPUInstancing);
         }
     }
 }
