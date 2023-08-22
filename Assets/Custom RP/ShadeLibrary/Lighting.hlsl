@@ -3,7 +3,7 @@
 
 float3 GetLighting(Surface surface)
 {
-    return surface.normal.y;
+    return surface.normal.y * surface.color;
 }
 
 #endif

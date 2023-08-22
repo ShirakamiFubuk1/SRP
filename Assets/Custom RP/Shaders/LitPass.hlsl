@@ -63,8 +63,9 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     #endif
 
     base.rgb = normalize(input.normalWS);
-    
-    return float4(surface.color,surface.alpha);
+
+    float3 color = GetLighting(surface);
+    return float4(color,surface.alpha);
 }
 
 #endif
