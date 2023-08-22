@@ -2,6 +2,7 @@
 #define CUSTOM_LIT_PASS_INCLUDED
 
 #include "../ShadeLibrary/Common.hlsl"
+#include "../ShadeLibrary/Surface.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
@@ -51,14 +52,18 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,input.baseUV);
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_BaseColor);
     float4 base = baseColor * baseMap;
-
+    Surface surface;
+    surface.normal = normalize(input.normalWS);
+    surface.color = base.rgb;
+    surface.alpha = base.a;
+    
     #if defined(_CLIPPING)
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
     #endif
 
     base.rgb = normalize(input.normalWS);
     
-    return base;
+    return float4(surface.color,surface.alpha);
 }
 
 #endif
