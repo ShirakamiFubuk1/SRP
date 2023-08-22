@@ -2,7 +2,11 @@
 {
 	
 	Properties {
+		
+		
 		_BaseColor("Base Color",Color) = (1.0,1.0,0.0,1.0)
+	
+		
 	}
 	
 	SubShader {
