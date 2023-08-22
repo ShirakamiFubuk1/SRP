@@ -1,15 +1,21 @@
-﻿Shader "Unlit/Unlit"
+﻿Shader "Custom RP/Unlit" 
 {
-    Properties
-    {
-        
-    }
-    SubShader
-    {
+	
+	Properties {
 
-        Pass
-        {
-            
-        }
-    }
+	}
+	
+	SubShader {
+		Pass 
+		{
+			HLSLPROGRAM
+
+			#pragma vertex UnlitPassVertex
+			#pragma fragment UnlitPassFragment
+
+			#include "UnlitPass.hlsl"
+			
+			ENDHLSL
+		}
+	}
 }
