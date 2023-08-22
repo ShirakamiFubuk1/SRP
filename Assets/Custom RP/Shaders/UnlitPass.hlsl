@@ -13,6 +13,7 @@ SAMPLER(sampler_BaseMap);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseColor)
+    UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
 struct Vrayings
@@ -46,7 +47,13 @@ float4 UnlitPassFragment(Vrayings input) : SV_TARGET
     UNITY_SETUP_INSTANCE_ID(input);
     float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,input.baseUV);
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_BaseColor);
-    return baseColor * baseMap;
+    float4 base = baseColor * baseMap;
+
+    #if defined(_CLIPPING)
+    clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
+    #endif
+    
+    return base;
 }
 
 #endif
