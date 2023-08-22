@@ -9,6 +9,9 @@ float4 UnlitPassVertex(float3 positionOS:POSITION):SV_POSITION
     return TransformWorldToHClip(positionWS);
 }
 
-void UnlitPassFragment(){}
+float4 UnlitPassFragment():SV_TARGET
+{
+    return float4(1.0,1.0,0.0,1.0);
+}
 
 #endif
