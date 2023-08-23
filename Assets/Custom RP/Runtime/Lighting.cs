@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 using Unity.Collections;
+using UnityEngine.UI;
 
 public class Lighting
 {
@@ -9,6 +10,8 @@ public class Lighting
     private CullingResults cullingResults;
 
     private const int maxDirLightCount = 4;
+
+    private Shadows shadows = new Shadows();
 
     private static int
         // dirLightColorId = Shader.PropertyToID("_DirectionalLightColor"),
@@ -30,6 +33,7 @@ public class Lighting
     {
         this.cullingResults = cullingResults;
         buffer.BeginSample(bufferName);
+        shadows.Setup(context,cullingResults,shadowSettings);
         // SetupDirectionalLight();
         SetupLights();
         buffer.EndSample(bufferName);
