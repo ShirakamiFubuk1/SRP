@@ -5,6 +5,7 @@
 #include "../ShadeLibrary/Surface.hlsl"
 #include "../ShadeLibrary/Lighting.hlsl"
 #include "../ShadeLibrary/BRDF.hlsl"
+#include "../ShadeLibrary/Shadows.hlsl"
 #include "../ShadeLibrary/Light.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
