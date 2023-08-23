@@ -35,18 +35,20 @@ public class Shadows
     private ShadowedDirectionalLight[] shadowedDirectionalLights =
         new ShadowedDirectionalLight[maxShadowedDirectionalLightCount];
 
-    public void ReserveDirectionalShadows(Light light, int visibleLightIndex)
+    public Vector2 ReserveDirectionalShadows(Light light, int visibleLightIndex)
     {
         if (ShadowedDirectionalLightCount < maxShadowedDirectionalLightCount 
             && light.shadows != LightShadows.None 
             && light.shadowStrength > 0f 
             && cullingResults.GetShadowCasterBounds(visibleLightIndex,out Bounds b))
         {
-            shadowedDirectionalLights[ShadowedDirectionalLightCount++] = new ShadowedDirectionalLight
+            shadowedDirectionalLights[ShadowedDirectionalLightCount] = new ShadowedDirectionalLight
             {
                 visibleLightIndex = visibleLightIndex
             };
+            return new Vector2(light.shadowStrength, ShadowedDirectionalLightCount++);
         }
+        return Vector2.zero;
     }
     
     public void Setup(
