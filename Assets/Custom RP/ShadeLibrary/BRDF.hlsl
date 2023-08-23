@@ -1,7 +1,9 @@
 ﻿#ifndef CUSTOM_BRDF_INCLUDED
 #define CUSTOM_BRDF_INCLUDED
 
+#define MIN_REFLECTIVITY 0.04
 
+#include "Surface.hlsl"
 
 struct BRDF
 {
@@ -10,13 +12,25 @@ struct BRDF
     float roughness;
 };
 
+float OneMinusReflectivity(float metallic)
+{
+    float range = 1.0 - MIN_REFLECTIVITY;
+    return range(1-metallic);
+}
+
 BRDF GetBRDF(Surface surface)
 {
     BRDF brdf;
-    brdf.diffuse = surface.color;
+
+    float oneMinusReflectivity = OneMinusReflectivity(surface.metallic);
+
+    brdf.diffuse = surface.color * oneMinusReflectivity;
     brdf.specular = 0.0;
     brdf.roughness = 0.0;
+
     return brdf;
 }
+
+
 
 #endif
