@@ -21,7 +21,11 @@ public class Shadows
 
     private int ShadowedDirectionalLightCount;
 
-    private static int dirShadowAtlasId = Shader.PropertyToID("_DirectionalShadowAtlas");
+    private static int 
+        dirShadowAtlasId = Shader.PropertyToID("_DirectionalShadowAtlas"),
+        dirShadowMatricesId = Shader.PropertyToID("_DirectionalShadowMatrices");
+
+    private static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirectionalLightCount];
     
      struct ShadowedDirectionalLight
      {
@@ -87,6 +91,7 @@ public class Shadows
             RenderDirectionalShadows(i,split,tileSize);
         }
         
+        buffer.SetGlobalMatrixArray(dirShadowMatricesId,dirShadowMatrices);
         buffer.EndSample(bufferName);
         ExecuteBuffer();
     }
@@ -98,7 +103,8 @@ public class Shadows
         cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(light.visibleLightIndex, 0, 1, Vector3.zero,
             tileSize, 0f, out Matrix4x4 viewMatrix, out Matrix4x4 projectionMatrix, out ShadowSplitData splitData);
         shadowSettings.splitData = splitData;
-        SetTileViewport(index,split,tileSize);
+        // SetTileViewport(index,split,tileSize);
+        dirShadowMatrices[index] = ConvertToAtlasMatrix(projectionMatrix * viewMatrix,SetTileViewport(index,split,tileSize),split);
         buffer.SetViewProjectionMatrices(viewMatrix,projectionMatrix);
         ExecuteBuffer();
         context.DrawShadows(ref shadowSettings);
@@ -113,9 +119,37 @@ public class Shadows
         }
     }
 
-    void SetTileViewport(int index, int split,float tileSize)
+    Vector2 SetTileViewport(int index, int split,float tileSize)
     {
         Vector2 offset = new Vector2(index % split, index / split);
         buffer.SetViewport(new Rect(offset.x*tileSize,offset.y*tileSize,tileSize,tileSize));
+        return offset;
+    }
+
+    Matrix4x4 ConvertToAtlasMatrix(Matrix4x4 matrix, Vector2 offset, int split)
+    {
+        if (SystemInfo.usesReversedZBuffer)
+        {
+            matrix.m20 = -matrix.m20;
+            matrix.m21 = -matrix.m21;
+            matrix.m22 = -matrix.m22;
+            matrix.m23 = -matrix.m23;
+        }
+        
+        float scale = 1f / split;
+        matrix.m00 = (0.5f * (matrix.m00 + matrix.m30) + offset.x * matrix.m30) * scale;
+        matrix.m01 = (0.5f * (matrix.m01 + matrix.m31) + offset.x * matrix.m31) * scale;
+        matrix.m02 = (0.5f * (matrix.m02 + matrix.m32) + offset.x * matrix.m32) * scale;
+        matrix.m03 = (0.5f * (matrix.m03 + matrix.m33) + offset.x * matrix.m33) * scale;
+        matrix.m10 = (0.5f * (matrix.m10 + matrix.m30) + offset.y * matrix.m30) * scale;
+        matrix.m11 = (0.5f * (matrix.m11 + matrix.m31) + offset.y * matrix.m31) * scale;
+        matrix.m12 = (0.5f * (matrix.m12 + matrix.m32) + offset.y * matrix.m32) * scale;
+        matrix.m13 = (0.5f * (matrix.m13 + matrix.m33) + offset.y * matrix.m33) * scale;
+        matrix.m20 = 0.5f * (matrix.m20 + matrix.m30);
+        matrix.m21 = 0.5f * (matrix.m21 + matrix.m31);
+        matrix.m22 = 0.5f * (matrix.m22 + matrix.m32);
+        matrix.m23 = 0.5f * (matrix.m23 + matrix.m33);
+        
+        return matrix;
     }
 }
