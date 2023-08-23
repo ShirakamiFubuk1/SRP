@@ -4,7 +4,6 @@
 #include "Light.hlsl"
 #include "BRDF.hlsl"
 
-
 float3 IncomingLight(Surface surface,Light light)
 {
     return saturate(dot(surface.normal,light.direction)) * light.color;

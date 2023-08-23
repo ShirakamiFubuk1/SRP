@@ -69,11 +69,11 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     #if defined(_CLIPPING)
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
     #endif
-
+    
     base.rgb = normalize(input.normalWS);
-
     BRDF brdf = GetBRDF(surface);
     float3 color = GetLighting(surface,brdf);
+    
     return float4(color,surface.alpha);
 }
 
