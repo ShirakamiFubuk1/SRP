@@ -4,6 +4,7 @@
 #define MIN_REFLECTIVITY 0.04
 
 #include "Surface.hlsl"
+#include "Common.hlsl"
 
 struct BRDF
 {
@@ -23,10 +24,11 @@ BRDF GetBRDF(Surface surface)
     BRDF brdf;
 
     float oneMinusReflectivity = OneMinusReflectivity(surface.metallic);
-
+    float perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(surface.smoothness);
+    
     brdf.diffuse = surface.color * oneMinusReflectivity;
-    brdf.specular = 0.0;
-    brdf.roughness = 0.0;
+    brdf.specular = lerp(MIN_REFLECTIVITY,surface.color,surface.metallic);
+    brdf.roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
     return brdf;
 }
