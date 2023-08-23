@@ -71,7 +71,13 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     #endif
     
     base.rgb = normalize(input.normalWS);
-    BRDF brdf = GetBRDF(surface);
+
+    #if defined(_PREMULTIPLY_ALPHA)
+        BRDF brdf = GetBRDF(surface,true);
+    #else
+        BRDF brdf = GetBRDF(surface);
+    #endif
+
     float3 color = GetLighting(surface,brdf);
     
     return float4(color,surface.alpha);
