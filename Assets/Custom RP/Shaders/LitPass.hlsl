@@ -25,6 +25,7 @@ UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 struct Vrayings
 {
     float4 positionCS : SV_POSITION;
+    float3 positionWS : VAR_POSITION;
     float3 normalWS : NORMAL;
     float2 baseUV : VAR_BASE_UV;
     UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -43,8 +44,8 @@ Vrayings LitPassVertex(Attributes input)
     Vrayings output;
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(input,output);
-    float3 positionWS = TransformObjectToWorld(input.positionOS);
-    output.positionCS = TransformWorldToHClip(positionWS);
+    output.positionWS = TransformObjectToWorld(input.positionOS);
+    output.positionCS = TransformWorldToHClip(output.positionWS);
     output.normalWS = TransformObjectToWorldNormal(input.normalOS);
     float4 baseST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_BaseMap_ST);
     output.baseUV = input.baseUV * baseST.xy + baseST.zw;
@@ -59,6 +60,7 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     float4 base = baseColor * baseMap;
     Surface surface;
     surface.normal = normalize(input.normalWS);
+    surface.viewDirection = normalize(_WorldSpaceCameraPos - input.positionWS);
     surface.color = base.rgb;
     surface.alpha = base.a;
     surface.metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Metallic);
