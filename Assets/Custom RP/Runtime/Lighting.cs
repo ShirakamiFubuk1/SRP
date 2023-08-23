@@ -26,7 +26,7 @@ public class Lighting
         name = bufferName
     };
 
-    public void Setup(ScriptableRenderContext context,CullingResults cullingResults)
+    public void Setup(ScriptableRenderContext context,CullingResults cullingResults,ShadowSettings shadowSettings)
     {
         this.cullingResults = cullingResults;
         buffer.BeginSample(bufferName);
