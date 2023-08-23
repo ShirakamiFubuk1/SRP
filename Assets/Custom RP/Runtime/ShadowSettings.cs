@@ -3,7 +3,7 @@
 [System.Serializable]
 public class ShadowSettings
 {
-    [Min(0f)] public float maxDistance = 100f;
+    [Min(0f)] public float maxDistance = 20f;
 
     public enum TextureSize
     {
