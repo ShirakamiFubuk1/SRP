@@ -4,6 +4,7 @@
 #include "../ShadeLibrary/Common.hlsl"
 #include "../ShadeLibrary/Surface.hlsl"
 #include "../ShadeLibrary/Lighting.hlsl"
+#include "../ShadeLibrary/BRDF.hlsl"
 #include "../ShadeLibrary/Light.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
@@ -69,7 +70,8 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
 
     base.rgb = normalize(input.normalWS);
 
-    float3 color = GetLighting(surface);
+    BRDF brdf = GetBRDF(surface);
+    float3 color = GetLighting(surface,brdf);
     return float4(color,surface.alpha);
 }
 
