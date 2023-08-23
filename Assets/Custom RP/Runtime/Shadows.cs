@@ -27,13 +27,19 @@ public class Shadows
 
     private static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirectionalLightCount];
     
+    private ShadowedDirectionalLight[] shadowedDirectionalLights =
+        new ShadowedDirectionalLight[maxShadowedDirectionalLightCount];
+    
      struct ShadowedDirectionalLight
      {
          public int visibleLightIndex;
      }
 
-    private ShadowedDirectionalLight[] shadowedDirectionalLights =
-        new ShadowedDirectionalLight[maxShadowedDirectionalLightCount];
+     struct DirectionalShadowData
+     {
+         float strength;
+         int tileOffset;
+     }
 
     public Vector2 ReserveDirectionalShadows(Light light, int visibleLightIndex)
     {
