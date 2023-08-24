@@ -3,7 +3,7 @@
 [System.Serializable]
 public class ShadowSettings
 {
-    [Min(0.001f)] public float maxDistance = 20f;
+    [Min(0.001f)] public float maxDistance = 100f;
 
     [Range(0.001f, 1f)] public float distanceFade = 0.1f;
 

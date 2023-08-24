@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Custom RP
   m_EditorClassIdentifier: 
   shadows:
-    maxDistance: 10
+    maxDistance: 20
+    distanceFade: 0.1
     directional:
       atlasSize: 512
       cascadeCount: 4
