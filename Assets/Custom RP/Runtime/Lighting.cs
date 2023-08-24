@@ -19,7 +19,7 @@ public class Lighting
         dirLightCountId = Shader.PropertyToID("_DirectionalLightCount"),
         dirLightColorsId = Shader.PropertyToID("_DirectionalLightColors"),
         dirLightDirectionsId = Shader.PropertyToID("_DirectionalLightDirections"),
-        dirLightShadowDataId = Shader.PropertyToID("_DirLightShadowDataId");
+        dirLightShadowDataId = Shader.PropertyToID("_DirectionalLightShadowData");
 
     private Vector4[]
         dirLightColors = new Vector4[maxDirLightCount],

@@ -27,18 +27,12 @@ public class Shadows
 
     private static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirectionalLightCount];
     
-    private ShadowedDirectionalLight[] shadowedDirectionalLights =
+    private ShadowedDirectionalLight[] ShadowedDirectionalLights =
         new ShadowedDirectionalLight[maxShadowedDirectionalLightCount];
     
      struct ShadowedDirectionalLight
      {
          public int visibleLightIndex;
-     }
-
-     struct DirectionalShadowData
-     {
-         float strength;
-         int tileOffset;
      }
 
     public Vector2 ReserveDirectionalShadows(Light light, int visibleLightIndex)
@@ -48,7 +42,7 @@ public class Shadows
             && light.shadowStrength > 0f 
             && cullingResults.GetShadowCasterBounds(visibleLightIndex,out Bounds b))
         {
-            shadowedDirectionalLights[ShadowedDirectionalLightCount] = new ShadowedDirectionalLight
+            ShadowedDirectionalLights[ShadowedDirectionalLightCount] = new ShadowedDirectionalLight
             {
                 visibleLightIndex = visibleLightIndex
             };
@@ -106,7 +100,7 @@ public class Shadows
 
     void RenderDirectionalShadows(int index,int split, int tileSize)
     {
-        ShadowedDirectionalLight light = shadowedDirectionalLights[index];
+        ShadowedDirectionalLight light = ShadowedDirectionalLights[index];
         var shadowSettings = new ShadowDrawingSettings(cullingResults, light.visibleLightIndex);
         cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(light.visibleLightIndex, 0, 1, Vector3.zero,
             tileSize, 0f, out Matrix4x4 viewMatrix, out Matrix4x4 projectionMatrix, out ShadowSplitData splitData);
