@@ -3,6 +3,8 @@
 
 #define MAX_DIRECTIONAL_LIGHT_COUNT 4
 
+#include "Shadows.hlsl"
+
 CBUFFER_START(_CustomLight)
 
     // float3 _DirectionalLightColor;
@@ -18,6 +20,7 @@ struct Light
 {
     float3 color;
     float3 direction;
+    float attenuation;
 };
 
 int GetDirectionalLightCount()
@@ -25,11 +28,24 @@ int GetDirectionalLightCount()
     return _DirectionalLightCount;
 }
 
-Light GetDirectionalLight(int index)
+DirectionalShadowData GetDirectionalShadowData(int lightIndex)
+{
+    DirectionalShadowData data;
+    data.strength = _DirectionalLightShadowData[lightIndex].x;
+    data.tileIndex = _DirectionalLightShadowData[lightIndex].y;
+
+    return data;
+}
+
+
+Light GetDirectionalLight(int index,Surface surfaceWS)
 {
     Light light;
     light.color = _DirectionalLightColors[index];
     light.direction = _DirectionalLightDirections[index];
+    DirectionalShadowData shadowData = GetDirectionalShadowData(index);
+    light.attenuation = GetDirectionalShadowAttenuation(shadowData,surfaceWS);
+    
     return light;
 }
 
