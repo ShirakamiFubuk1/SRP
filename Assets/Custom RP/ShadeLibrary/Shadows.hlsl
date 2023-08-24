@@ -19,6 +19,7 @@ CBUFFER_END
 struct ShadowData
 {
     int cascadeIndex;
+    float strength;
 };
 
 struct DirectionalShadowData
@@ -29,6 +30,8 @@ struct DirectionalShadowData
 
 ShadowData GetShadowData(Surface surfaceWS)
 {
+    ShadowData data;
+    data.strength = 1.0;
     int i;
     for(i = 0;i<_CascadeCount;i++)
     {
@@ -39,7 +42,12 @@ ShadowData GetShadowData(Surface surfaceWS)
             break;
         }
     }
-    ShadowData data;
+
+    if(i==_CascadeCount)
+    {
+        data.strength = 0.0;
+    }
+    
     data.cascadeIndex = i;
     return data;
 }
