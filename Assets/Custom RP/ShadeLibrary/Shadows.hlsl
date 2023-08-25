@@ -4,9 +4,6 @@
 #define MAX_SHADOWED_DIRECTIONAL_LIGHT_COUNT 4
 #define MAX_CASCADE_COUNT 4
 
-#include "../ShadeLibrary/Common.hlsl"
-#include "../ShadeLibrary/Surface.hlsl"
-
 TEXTURE2D_SHADOW(_DirectionalShadowAtlas);
 #define SHADOW_SAMPLER sampler_linear_clamp_compare
 SAMPLER_CMP(SHADOW_SAMPLER);
