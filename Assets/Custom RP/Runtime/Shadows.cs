@@ -28,10 +28,13 @@ public class Shadows
         dirShadowMatricesId = Shader.PropertyToID("_DirectionalShadowMatrices"),
         cascadeCountId = Shader.PropertyToID("_CascadeCount"),
         cascadeCullingSpheresId = Shader.PropertyToID("_CascadeCullingSpheres"),
+        cascadeDataId = Shader.PropertyToID("_CascadeData"),
         //shadowDistanceId = Shader.PropertyToID("_ShadowDistance");
         shadowDistanceFadeId = Shader.PropertyToID("_ShadowDistanceFade");
-    
-    private static Vector4[] cascadeCullingSpheres = new Vector4[maxCascades];
+
+    private static Vector4[]
+        cascadeCullingSpheres = new Vector4[maxCascades],
+        cascadeData = new Vector4[maxCascades];
 
     private static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirectionalLightCount * maxCascades];
     
@@ -107,6 +110,7 @@ public class Shadows
         
         buffer.SetGlobalInt(cascadeCountId,setting.directional.cascadeCount);
         buffer.SetGlobalVectorArray(cascadeCullingSpheresId,cascadeCullingSpheres);
+        buffer.SetGlobalVectorArray(cascadeDataId,cascadeData);
         //buffer.SetGlobalFloat(shadowDistanceId,setting.maxDistance);
 
         float f = 1f - setting.directional.cascadeFade;
@@ -133,18 +137,26 @@ public class Shadows
             shadowSettings.splitData = splitData;
             if (index == 0)
             {
-                Vector4 cullingSphere = splitData.cullingSphere;
-                cullingSphere.w *= cullingSphere.w;
-                cascadeCullingSpheres[i] = cullingSphere;
+                SetCascadeData(i, splitData.cullingSphere, tileSize);
             }
             int tileIndex = tileOffset + i;
             // SetTileViewport(index,split,tileSize);
             dirShadowMatrices[tileIndex] = ConvertToAtlasMatrix(projectionMatrix * viewMatrix,SetTileViewport(tileIndex,split,tileSize),split);
             buffer.SetViewProjectionMatrices(viewMatrix,projectionMatrix);
+            
+            //buffer.SetGlobalDepthBias(0f,3f);
             ExecuteBuffer();
             context.DrawShadows(ref shadowSettings);
+            //buffer.SetGlobalDepthBias(0f,0f);
         }
 
+    }
+
+    void SetCascadeData(int index, Vector4 cullingSphere, float tileSize)
+    {
+        cascadeData[index].x = 1f / cullingSphere.w;
+        cullingSphere.w *= cullingSphere.w;
+        cascadeCullingSpheres[index] = cullingSphere;
     }
 
     public void Cleanup()
