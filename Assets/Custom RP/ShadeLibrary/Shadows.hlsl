@@ -30,6 +30,7 @@ struct DirectionalShadowData
 {
     float strength;
     int tileIndex;
+    float normalBias;
 };
 
 float FadedShadowStrength(float distance, float scale,float fade)
@@ -77,7 +78,7 @@ float GetDirectionalShadowAttenuation (DirectionalShadowData directional,ShadowD
         return 1.0;
     }
     
-    float3 normalBias = surfaceWS.normal * _CascadeData[global.cascadeIndex].y;
+    float3 normalBias = surfaceWS.normal * (directional.normalBias * _CascadeData[global.cascadeIndex].y);
     float3 positionSTS = mul(_DirectionalShadowMatrices[directional.tileIndex],float4(surfaceWS.position + normalBias,1.0)).xyz;
 
     float shadow = SampleDirectionalShadowAtlas(positionSTS);
