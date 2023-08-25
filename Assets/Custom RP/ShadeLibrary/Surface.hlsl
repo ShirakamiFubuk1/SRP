@@ -7,10 +7,10 @@ struct Surface
     float3 normal;
     float3 viewDirection;
     float3 color;
+    float depth;
     float alpha;
     float metallic;
     float smoothness;
-    float depth;
 };
 
 #endif
