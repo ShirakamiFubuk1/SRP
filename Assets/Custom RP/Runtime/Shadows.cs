@@ -41,7 +41,7 @@ public class Shadows
     
     private ShadowedDirectionalLight[] ShadowedDirectionalLights =
         new ShadowedDirectionalLight[maxShadowedDirectionalLightCount];
-
+    
     private static string[] directionalFilterKeywords =
     {
         "_DIRECTIONAL_PCF3",
