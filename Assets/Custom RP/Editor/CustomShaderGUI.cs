@@ -9,6 +9,11 @@ public class CustomShaderGUI : ShaderGUI
     private MaterialProperty[] properties;
 
     private bool showPresets;
+
+    enum ShadowMode
+    {
+        On,Clipped,Dithered,Off
+    }
     
     public override void OnGUI(
         MaterialEditor materialEditor, MaterialProperty[] properties
@@ -26,6 +31,18 @@ public class CustomShaderGUI : ShaderGUI
             ClipPreset();
             FadePreset();
             TransparentPreset();
+        }
+    }
+
+    ShadowMode Shadows
+    {
+        set
+        {
+            if (SetProperty("_Shadows", (float)value))
+            {
+                SetKeyword("_SHADOWS_CLIP",value==ShadowMode.Clipped);
+                SetKeyword("_Shadows_DITHER",value==ShadowMode.Dithered);
+            }
         }
     }
     
