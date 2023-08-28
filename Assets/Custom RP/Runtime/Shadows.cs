@@ -48,6 +48,12 @@ public class Shadows
         "_DIRECTIONAL_PCF5",
         "_DIRECTIONAL_PCF7"
     };
+
+    private static string[] cascadeBlendKeywords =
+    {
+        "_CASCADE_BLEND_SOFT",
+        "_CASCADE_BLEND_DITHER"
+    };
     
      struct ShadowedDirectionalLight
      {
@@ -103,18 +109,18 @@ public class Shadows
         }
     }
 
-    void SetKeywords()
+    void SetKeywords(string[] keywords,int enabledIndex)
     {
-        int enableIndex = (int)setting.directional.filter - 1;
-        for (int i = 0; i < directionalFilterKeywords.Length; i++)
+        //int enableIndex = (int)setting.directional.filter - 1;
+        for (int i = 0; i < keywords.Length; i++)
         {
-            if (i == enableIndex)
+            if (i == enabledIndex)
             {
-                buffer.EnableShaderKeyword(directionalFilterKeywords[i]);
+                buffer.EnableShaderKeyword(keywords[i]);
             }
             else
             {
-                buffer.DisableShaderKeyword(directionalFilterKeywords[i]);
+                buffer.DisableShaderKeyword(keywords[i]);
             }
         }
     }
@@ -145,7 +151,8 @@ public class Shadows
         float f = 1f - setting.directional.cascadeFade;
         buffer.SetGlobalVector(shadowDistanceFadeId,new Vector4(1f/setting.maxDistance,1f/setting.distanceFade , 1f/(1f - f * f)));
         buffer.SetGlobalMatrixArray(dirShadowMatricesId,dirShadowMatrices);
-        SetKeywords();
+        SetKeywords(directionalFilterKeywords,(int)setting.directional.filter - 1);
+        SetKeywords(cascadeBlendKeywords,(int)setting.directional.cascadeBlend - 1);
         buffer.SetGlobalVector(shadowAtlasSized,new Vector4(atlasSize,1f/atlasSize));
         buffer.EndSample(bufferName);
         ExecuteBuffer();

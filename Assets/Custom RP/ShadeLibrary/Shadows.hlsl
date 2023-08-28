@@ -50,39 +50,45 @@ float FadedShadowStrength(float distance, float scale,float fade)
     return saturate((1.0-distance*scale)*fade);
 }
 
-ShadowData GetShadowData(Surface surfaceWS)
-{
-    ShadowData data;
-    data.cascadeBlend = 1.0;
-    data.strength = FadedShadowStrength(surfaceWS.depth,_ShadowDistanceFade.x,_ShadowDistanceFade.y);
-    int i;
-    for(i = 0;i<_CascadeCount;i++)
-    {
-        float4 sphere = _CascadeCullingSpheres[i];
-        float distanceSqr = DistanceSquared(surfaceWS.position,sphere.xyz);
-        if(distanceSqr < sphere.w)
-        {
-            float fade = FadedShadowStrength(distanceSqr,_CascadeData[i].x,_ShadowDistanceFade.z);
-            if(i==_CascadeCount - 1)
-            {
-                data.strength *= fade;
-            }
-            else
-            {
-                data.cascadeBlend = fade;
-            }
-            break;
-        }
-    }
-
-    if(i==_CascadeCount)
-    {
-        data.strength = 0.0;
-    }
-    
-    data.cascadeIndex = i;
-    return data;
+ShadowData GetShadowData (Surface surfaceWS) {
+	ShadowData data;
+	data.cascadeBlend = 1.0;
+	data.strength = FadedShadowStrength(
+		surfaceWS.depth, _ShadowDistanceFade.x, _ShadowDistanceFade.y
+	);
+	int i;
+	for (i = 0; i < _CascadeCount; i++) {
+		float4 sphere = _CascadeCullingSpheres[i];
+		float distanceSqr = DistanceSquared(surfaceWS.position, sphere.xyz);
+		if (distanceSqr < sphere.w) {
+			float fade = FadedShadowStrength(
+				distanceSqr, _CascadeData[i].x, _ShadowDistanceFade.z
+			);
+			if (i == _CascadeCount - 1) {
+				data.strength *= fade;
+			}
+			else {
+				data.cascadeBlend = fade;
+			}
+			break;
+		}
+	}
+	
+	if (i == _CascadeCount) {
+		data.strength = 0.0;
+	}
+	#if defined(_CASCADE_BLEND_DITHER)
+		else if (data.cascadeBlend < surfaceWS.dither) {
+			i += 1;
+		}
+	#endif
+	#if !defined(_CASCADE_BLEND_SOFT)
+	data.cascadeBlend = 1.0;
+	#endif
+	data.cascadeIndex = i;
+	return data;
 }
+
 
 float SampleDirectionalShadowAtlas(float3 positionSTS)
 {
