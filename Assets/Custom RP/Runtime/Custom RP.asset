@@ -16,13 +16,14 @@ MonoBehaviour:
     maxDistance: 12
     distanceFade: 0.1
     directional:
-      atlasSize: 1024
-      filter: 1
+      atlasSize: 512
+      filter: 3
       cascadeCount: 4
       cascadeRatio1: 0.3
       cascadeRatio2: 0.4
       cascadeRatio3: 0.5
       cascadeFade: 0.1
+      cascadeBlend: 2
   useDynamicBatching: 0
   useGPUInstancing: 1
   useSRPBatcher: 0
