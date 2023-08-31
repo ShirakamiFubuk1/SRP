@@ -1,7 +1,7 @@
 #ifndef CUSTOM_UNLIT_PASS_INCLUDED
 #define CUSTOM_UNLIT_PASS_INCLUDED
 
-#include "../ShadeLibrary/Common.hlsl"
+#include "../ShaderLibrary/Common.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
@@ -13,7 +13,7 @@ SAMPLER(sampler_BaseMap);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseColor)
-    UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
+    UNITY_DEFINE_INSTANCED_PROP(float, _Cutoff)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
 struct Vrayings
@@ -50,7 +50,7 @@ float4 UnlitPassFragment(Vrayings input) : SV_TARGET
     float4 base = baseColor * baseMap;
 
     #if defined(_CLIPPING)
-    clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
+    clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Cutoff));
     #endif
     
     return base;

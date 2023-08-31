@@ -1,12 +1,12 @@
 #ifndef CUSTOM_LIT_PASS_INCLUDED
 #define CUSTOM_LIT_PASS_INCLUDED
 
-#include "../ShadeLibrary/Common.hlsl"
-#include "../ShadeLibrary/Surface.hlsl"
-#include "../ShadeLibrary/Lighting.hlsl"
-#include "../ShadeLibrary/BRDF.hlsl"
-#include "../ShadeLibrary/Shadows.hlsl"
-#include "../ShadeLibrary/Light.hlsl"
+#include "../ShaderLibrary/Common.hlsl"
+#include "../ShaderLibrary/Surface.hlsl"
+#include "../ShaderLibrary/Lighting.hlsl"
+#include "../ShaderLibrary/BRDF.hlsl"
+#include "../ShaderLibrary/Shadows.hlsl"
+#include "../ShaderLibrary/Light.hlsl"
 
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
@@ -18,7 +18,7 @@ SAMPLER(sampler_BaseMap);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseColor)
-    UNITY_DEFINE_INSTANCED_PROP(float, _CutOff)
+    UNITY_DEFINE_INSTANCED_PROP(float, _Cutoff)
     UNITY_DEFINE_INSTANCED_PROP(float,_Metallic)
     UNITY_DEFINE_INSTANCED_PROP(float,_Smoothness)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
@@ -59,6 +59,10 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,input.baseUV);
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_BaseColor);
     float4 base = baseColor * baseMap;
+
+    #if defined(_CLIPPING)
+        clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Cutoff));
+    #endif
     
     Surface surface;
 
@@ -72,12 +76,6 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     surface.smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Smoothness);
     surface.dither = InterleavedGradientNoise(input.positionCS.xy,0);
     
-    #if defined(_CLIPPING)
-    clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CutOff));
-    #endif
-    
-    base.rgb = normalize(input.normalWS);
-
     #if defined(_PREMULTIPLY_ALPHA)
         BRDF brdf = GetBRDF(surface,true);
     #else

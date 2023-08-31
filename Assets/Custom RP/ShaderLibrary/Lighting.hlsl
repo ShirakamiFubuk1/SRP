@@ -3,6 +3,7 @@
 
 #include "Light.hlsl"
 #include "BRDF.hlsl"
+#include "Surface.hlsl"
 
 float3 IncomingLight(Surface surface,Light light)
 {
