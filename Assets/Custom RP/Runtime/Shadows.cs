@@ -62,7 +62,7 @@ public class Shadows
          public float nearPlaneOffset;
      }
 
-    public Vector4 ReserveDirectionalShadows(Light light, int visibleLightIndex)
+    public Vector3 ReserveDirectionalShadows(Light light, int visibleLightIndex)
     {
         if (ShadowedDirectionalLightCount < maxShadowedDirectionalLightCount 
             && light.shadows != LightShadows.None 
