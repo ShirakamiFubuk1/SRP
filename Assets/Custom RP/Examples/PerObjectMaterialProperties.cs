@@ -25,6 +25,7 @@ public class PerObjectMaterialProperties : MonoBehaviour
         OnValidate();
     }
 
+    //加载或更改组建后,将会在Unity中调用OnValidate.
     void OnValidate()
     {
         if (block == null)

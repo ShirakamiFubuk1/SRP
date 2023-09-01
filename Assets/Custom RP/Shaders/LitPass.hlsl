@@ -8,6 +8,9 @@
 #include "../ShaderLibrary/Shadows.hlsl"
 #include "../ShaderLibrary/Light.hlsl"
 
+
+//将所有材质属性放入具体的存储缓冲区内定义来兼容SRPBatch
+//由于不是所有平台都支持常量缓冲区,故使用Core RP库中包含的CBUFFER_START和CBUFFER_END宏
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
 // CBUFFER_END
@@ -15,6 +18,7 @@
 TEXTURE2D(_BaseMap);
 SAMPLER(sampler_BaseMap);
 
+//用支持Instance的Buffer来替换CBuffer,需要一个buffer名作为参数
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4,_BaseColor)
@@ -29,6 +33,7 @@ struct Vrayings
     float3 positionWS : VAR_POSITION;
     float3 normalWS : NORMAL;
     float2 baseUV : VAR_BASE_UV;
+    //添加对象索引
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -43,6 +48,7 @@ struct Attributes
 Vrayings LitPassVertex(Attributes input)
 {
     Vrayings output;
+    //从输入中提取索引
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(input,output);
     output.positionWS = TransformObjectToWorld(input.positionOS);

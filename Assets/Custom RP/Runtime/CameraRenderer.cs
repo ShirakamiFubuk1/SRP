@@ -23,9 +23,10 @@ public partial class CameraRenderer
 
     CullingResults cullingResults;
 
-    static ShaderTagId unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
-    
-    static ShaderTagId litShaderTagId = new ShaderTagId("CustomLit");
+    static ShaderTagId 
+        unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit"), 
+        //添加lit shader
+        litShaderTagId = new ShaderTagId("CustomLit");
     
     public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing,ShadowSettings shadowSettings)
     {

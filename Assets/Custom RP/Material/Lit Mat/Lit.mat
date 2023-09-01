@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Lit
   m_Shader: {fileID: 4800000, guid: a78c8a9f228d0b540aa964d0f7c71f17, type: 3}
-  m_ShaderKeywords: _CLIPPING _RECEIVE_SHADOWS _SHADOWS_DITHER
+  m_ShaderKeywords: _RECEIVE_SHADOWS _SHADOWS_DITHER
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -61,7 +61,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
-    - _Clipping: 1
+    - _Clipping: 0
     - _CutOff: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
