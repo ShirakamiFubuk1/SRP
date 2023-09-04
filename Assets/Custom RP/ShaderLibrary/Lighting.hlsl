@@ -1,5 +1,6 @@
 #ifndef CUSTOM_LIGHTING_INCLUDED
 #define CUSTOM_LIGHTING_INCLUDED
+//发送给GPU的灯光数据
 
 #include "Light.hlsl"
 #include "BRDF.hlsl"

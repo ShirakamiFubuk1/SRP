@@ -9,6 +9,7 @@ public partial class CameraRenderer
 
     Camera camera;
 
+    //为CameraRenderer提供一个lighting实例
     Lighting lighting = new Lighting();
 
     //上下文会延迟实际的渲染，直到我们提交他为止。在此之前，我们会对其进行配置并添加命令以供后续的执行。
@@ -21,6 +22,7 @@ public partial class CameraRenderer
         name = bufferName
     };
 
+    //裁剪实例,用于判定哪些需要被渲染
     CullingResults cullingResults;
 
     static ShaderTagId 
@@ -46,6 +48,7 @@ public partial class CameraRenderer
         
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
+        //绘制课件的几何图形之前用来设置灯光
         lighting.Setup(context,cullingResults,shadowSettings);
         buffer.EndSample(SampleName);
         Setup();

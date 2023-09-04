@@ -23,6 +23,7 @@
 		{
 			Tags
 			{
+				//更改光照模式
 				"LightMode" = "CustomLit"
 			}
 			
@@ -30,6 +31,7 @@
 			
 			HLSLPROGRAM
 
+			//目标级别
 			#pragma target 3.5
 			#pragma shader_feature _CLIPPING
 			#pragma shader_feature _PREMULTIPLY_ALPHA

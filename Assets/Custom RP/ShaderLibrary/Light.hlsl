@@ -1,11 +1,14 @@
 #ifndef CUSTOM_LIGHT_INCLUDED
 #define CUSTOM_LIGHT_INCLUDED
+//储存灯光数据
 
+//使用四个可见光
 #define MAX_DIRECTIONAL_LIGHT_COUNT 4
 
 #include "Shadows.hlsl"
 
 CBUFFER_START(_CustomLight)
+    //buffer可以用结构体但是支持不好,故此处不使用结构体
 
     // float3 _DirectionalLightColor;
     // float3 _DirectionalLightDirection;

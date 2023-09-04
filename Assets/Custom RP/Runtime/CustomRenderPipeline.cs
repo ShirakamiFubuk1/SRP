@@ -17,6 +17,7 @@ public class CustomRenderPipeline : RenderPipeline//资产返回RP实例所使�
         this.useGPUInstancing = useGPUInstancing;
         this.shadowSettings = shadowSettings;
         GraphicsSettings.useScriptableRenderPipelineBatching = useSRPBatcher;
+        //使用线性空间
         GraphicsSettings.lightsUseLinearIntensity = true;
     }
     

@@ -78,6 +78,7 @@ float4 LitPassFragment(Vrayings input) : SV_TARGET
     surface.depth = -TransformWorldToView(input.positionWS);
     surface.color = base.rgb;
     surface.alpha = base.a;
+    //从buffer中获得属性
     surface.metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Metallic);
     surface.smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Smoothness);
     surface.dither = InterleavedGradientNoise(input.positionCS.xy,0);
