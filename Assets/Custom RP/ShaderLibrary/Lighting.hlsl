@@ -13,6 +13,7 @@ float3 IncomingLight(Surface surface,Light light)
 
 float3 GetLighting(Surface surface, BRDF brdf,Light light)
 {
+    //乘上BRDF反射率
     return IncomingLight(surface,light) * DirectBRDF(surface,brdf,light);
 }
 

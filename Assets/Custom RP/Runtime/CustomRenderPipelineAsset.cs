@@ -6,8 +6,9 @@ using UnityEngine.Rendering;
 [CreateAssetMenu(menuName = "Rendering/Custom Render Pipeline")]//向Asset/Create菜单中添加一个菜单条目。添加menuName将其放在Rendering/Custom Render Pipeline中
 public class CustomRenderPipelineAsset : RenderPipelineAsset//资产类型必须继承自RenderPipelineAsset，该类在UnityEngine.Rendering命名空间下
 {
+    //将阴影设置字段添加到CustomRenderPipelineAsset
     [SerializeField] 
-    private ShadowSettings shadows = default;
+    private ShadowSettings shadowSettings = default;
     
     [SerializeField] 
     private bool useDynamicBatching = true, useGPUInstancing = true, useSRPBatcher = true;
@@ -15,6 +16,7 @@ public class CustomRenderPipelineAsset : RenderPipelineAsset//资产类型必须
     //CreatePipeline 返回一个 __CustomRenderPipeline__ 新实例。它会给我们一个有效且附带功能的管线实例。
     protected override RenderPipeline CreatePipeline()
     {
-        return new CustomRenderPipeline(useDynamicBatching,useGPUInstancing,useSRPBatcher,shadows);
+        //将这些设置传输给CustomRenderPipeline
+        return new CustomRenderPipeline(useDynamicBatching,useGPUInstancing,useSRPBatcher,shadowSettings);
     }
 }

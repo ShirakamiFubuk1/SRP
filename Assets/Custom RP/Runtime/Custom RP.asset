@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ec076d6b0f3304781d44c3ac539b69, type: 3}
   m_Name: Custom RP
   m_EditorClassIdentifier: 
-  shadows:
-    maxDistance: 10
+  shadowSettings:
+    maxDistance: 100
     distanceFade: 0.1
     directional:
-      atlasSize: 4096
+      atlasSize: 1024
       filter: 2
       cascadeCount: 4
-      cascadeRatio1: 0.3
-      cascadeRatio2: 0.4
+      cascadeRatio1: 0.1
+      cascadeRatio2: 0.25
       cascadeRatio3: 0.5
       cascadeFade: 0.1
       cascadeBlend: 2

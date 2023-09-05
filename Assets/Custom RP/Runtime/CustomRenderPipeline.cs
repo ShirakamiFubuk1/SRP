@@ -9,6 +9,7 @@ public class CustomRenderPipeline : RenderPipeline//资产返回RP实例所使�
 
     bool useDynamicBatching, useGPUInstancing;
 
+    //保持对ShadowSettings的引用
     private ShadowSettings shadowSettings;
 
     public CustomRenderPipeline(bool useDynamicBatching,bool useGPUInstancing,bool useSRPBatcher,ShadowSettings shadowSettings)
@@ -28,6 +29,7 @@ public class CustomRenderPipeline : RenderPipeline//资产返回RP实例所使�
     {
         foreach (Camera camera in cameras)
         {
+            //调用render时将设置传输给cameraRenderer
             renderer.Render(context,camera,useDynamicBatching,useGPUInstancing,shadowSettings);
         }
     }

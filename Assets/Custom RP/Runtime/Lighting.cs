@@ -11,6 +11,7 @@ public class Lighting
 
     private const int maxDirLightCount = 4;
 
+    //跟踪Shadows实例,Setup方法中调用shadows的Setup方法
     private Shadows shadows = new Shadows();
 
     private static int
@@ -31,6 +32,7 @@ public class Lighting
         name = bufferName
     };
 
+    //将阴影设置的参数添加到Lighting.Setup
     public void Setup(ScriptableRenderContext context,CullingResults cullingResults,ShadowSettings shadowSettings)
     {
         this.cullingResults = cullingResults;
@@ -38,6 +40,8 @@ public class Lighting
         shadows.Setup(context,cullingResults,shadowSettings);
         // SetupDirectionalLight();
         SetupLights();
+        //保留阴影后,我们需要渲染他们.
+        //SetupLights在Lighting.Render中完成之后,通过调用新的Shadows.Render方法来执行
         shadows.Render();
         buffer.EndSample(bufferName);
         context.ExecuteCommandBuffer(buffer);
@@ -79,11 +83,13 @@ public class Lighting
         dirLightColors[index] = visibleLight.finalColor;
         //前向矢量是矩阵的第三列,必须再次取反方向
         dirLightDirections[index] = -visibleLight.localToWorldMatrix.GetColumn(2);
+        //可以在Lighting.SetupDirectionalLight中保留阴影
         dirLightShadowData[index] = shadows.ReserveDirectionalShadows(visibleLight.light,index);
     }
 
     public void Cleanup()
     {
+        //清除shadows的RT
         shadows.Cleanup();
     }
 }

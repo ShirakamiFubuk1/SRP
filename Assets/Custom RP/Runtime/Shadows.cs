@@ -24,6 +24,7 @@ public class Shadows
     private int ShadowedDirectionalLightCount;
 
     private static int
+        //使用_DirectionalShadowAtlas来引用定向阴影图集
         dirShadowAtlasId = Shader.PropertyToID("_DirectionalShadowAtlas"),
         dirShadowMatricesId = Shader.PropertyToID("_DirectionalShadowMatrices"),
         cascadeCountId = Shader.PropertyToID("_CascadeCount"),
@@ -55,13 +56,18 @@ public class Shadows
         "_CASCADE_BLEND_DITHER"
     };
     
+    //由于不知道哪个可见光会产生阴影,必须他们进行跟踪.
      struct ShadowedDirectionalLight
      {
          public int visibleLightIndex;
          public float slopeScaleBias;
          public float nearPlaneOffset;
      }
-
+     
+     //为了弄清楚哪些光会产生阴影,我们将添加一个带有光和可见光索引参数的公共方法
+     //它的工作是在阴影图集中为灯光的阴影贴图保留空间,并存储渲染所需要的信息
+     //阴影只给有阴影的灯光,如果灯光的阴影模式设置为无或者阴影强度为零则忽略
+     //除此之外,可见光影响不到的对象可以用GetShadowCasterBounds来检查边界
     public Vector3 ReserveDirectionalShadows(Light light, int visibleLightIndex)
     {
         if (ShadowedDirectionalLightCount < maxShadowedDirectionalLightCount 
@@ -105,6 +111,7 @@ public class Shadows
     {
         if (ShadowedDirectionalLightCount > 0)
         {
+            //将阴影的渲染委托给另一个RenderDirectionalShadows方法
             RenderDirectionalShadows();
         }
     }
@@ -127,9 +134,13 @@ public class Shadows
 
     void RenderDirectionalShadows()
     {
+        //通过将阴影投射对象绘制到纹理来创建阴影贴图
         int atlasSize = (int)setting.directional.atlasSize;
+        //声明使用正方形渲染纹理,使用32位深度缓冲区位数,使用bilinear的过滤模式,使用Shadowmap类型的RT
         buffer.GetTemporaryRT(dirShadowAtlasId,atlasSize,atlasSize,32,FilterMode.Bilinear,RenderTextureFormat.Shadowmap);
+        //设置不加载到相机而是存储起来以供使用
         buffer.SetRenderTarget(dirShadowAtlasId,RenderBufferLoadAction.DontCare,RenderBufferStoreAction.Store);
+        //清除原有的RT,深度已经存储完成
         buffer.ClearRenderTarget(true,false,Color.clear);
         buffer.BeginSample(bufferName);
         ExecuteBuffer();
@@ -146,11 +157,11 @@ public class Shadows
         buffer.SetGlobalInt(cascadeCountId,setting.directional.cascadeCount);
         buffer.SetGlobalVectorArray(cascadeCullingSpheresId,cascadeCullingSpheres);
         buffer.SetGlobalVectorArray(cascadeDataId,cascadeData);
+        buffer.SetGlobalMatrixArray(dirShadowMatricesId,dirShadowMatrices);
         //buffer.SetGlobalFloat(shadowDistanceId,setting.maxDistance);
 
         float f = 1f - setting.directional.cascadeFade;
         buffer.SetGlobalVector(shadowDistanceFadeId,new Vector4(1f/setting.maxDistance,1f/setting.distanceFade , 1f/(1f - f * f)));
-        buffer.SetGlobalMatrixArray(dirShadowMatricesId,dirShadowMatrices);
         SetKeywords(directionalFilterKeywords,(int)setting.directional.filter - 1);
         SetKeywords(cascadeBlendKeywords,(int)setting.directional.cascadeBlend - 1);
         buffer.SetGlobalVector(shadowAtlasSized,new Vector4(atlasSize,1f/atlasSize));
@@ -158,18 +169,25 @@ public class Shadows
         ExecuteBuffer();
     }
 
+    //添加一个变体RenderDirectionalShadows方法,第一个参数是阴影光索引,第二个是他在图集中的图块大小
     void RenderDirectionalShadows(int index,int split, int tileSize)
     {
         ShadowedDirectionalLight light = ShadowedDirectionalLights[index];
+        //通过调用shadowSettings的构造函数方法,用存储的提出结果和可见光索引来配置对象
         var shadowSettings = new ShadowDrawingSettings(cullingResults, light.visibleLightIndex);
 
         int cascadeCount = setting.directional.cascadeCount;
         int tileOffset = index * cascadeCount;
         Vector3 ratios = setting.directional.CascadeRatios;
         float cullingFactor = Mathf.Max(0f,0.8f - setting.directional.cascadeFade);
-
+        
         for (int i = 0; i < cascadeCount; i++)
         {
+            //由于定向光为无限远,没有真实位置,需要找出和灯光方向匹配的视图和投影矩阵
+            //需要一个裁剪空间立方体,该立方体包含可见光阴影的摄像机可见区域重叠
+            //cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives即可完成此功能,一共有九个参数
+            //第一个参数是可见光指数,二三四控制阴影级联,五为纹理尺寸,六是靠近平面的阴影.
+            //后三个参数是输出参数,七是视图矩阵,八是投影矩阵,最后一个是ShadowSplitData结构
             cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(light.visibleLightIndex, i,
                 cascadeCount, ratios,
                 tileSize, light.nearPlaneOffset, out Matrix4x4 viewMatrix, out Matrix4x4 projectionMatrix, out ShadowSplitData splitData);
@@ -208,6 +226,7 @@ public class Shadows
     {
         if (ShadowedDirectionalLightCount > 0)
         {
+            //使用完成RT后释放它
             buffer.ReleaseTemporaryRT(dirShadowAtlasId);
             ExecuteBuffer();
         }

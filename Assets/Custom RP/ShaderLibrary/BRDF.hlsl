@@ -20,16 +20,19 @@ BRDF GetBRDF (Surface surface, bool applyAlphaToDiffuse = false) {
 
 	brdf.diffuse = surface.color * oneMinusReflectivity;
 	if (applyAlphaToDiffuse) {
+		//预乘alpha防止Cdiff和Cspec同时乘上Alpha减弱
 		brdf.diffuse *= surface.alpha;
 	}
 	brdf.specular = lerp(MIN_REFLECTIVITY, surface.color, surface.metallic);
 
+	//通过此函数将smoothness转化成实际粗糙度值
 	float perceptualRoughness =
 		PerceptualSmoothnessToPerceptualRoughness(surface.smoothness);
 	brdf.roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 	return brdf;
 }
 
+//Cook-Torrance's BRDF spec
 float SpecularStrength (Surface surface, BRDF brdf, Light light) {
 	float3 h = SafeNormalize(light.direction + surface.viewDirection);
 	float nh2 = Square(saturate(dot(surface.normal, h)));

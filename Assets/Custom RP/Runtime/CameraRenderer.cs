@@ -41,6 +41,7 @@ public partial class CameraRenderer
         PrepareForSceneWindow();
         
         //在Setup之前调用Cull，实际上是通过调用上下文的Cull来完成的，会产生一个CullingResults结构。
+        //将CameraRenderer.Render传递给Lighting.Setup以及Cull的方法
         if (!Cull(shadowSettings.maxDistance))
         {
             return;
@@ -48,7 +49,7 @@ public partial class CameraRenderer
         
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
-        //绘制课件的几何图形之前用来设置灯光
+        //绘制课件的几何图形之前用来设置灯光以及阴影
         lighting.Setup(context,cullingResults,shadowSettings);
         buffer.EndSample(SampleName);
         Setup();
@@ -121,6 +122,7 @@ public partial class CameraRenderer
             flags == CameraClearFlags.Color,
             flags == CameraClearFlags.Color ? camera.backgroundColor.linear : Color.clear
         );
+        buffer.BeginSample(SampleName);
         ExecuteBuffer();
         //context.SetupCameraProperties(camera);
     }
@@ -132,6 +134,7 @@ public partial class CameraRenderer
         buffer.Clear();
     }
 
+    //传入距离参数
     bool Cull(float maxShadowDistance)
     {
         //ScriptableCullingParameters p;
@@ -140,6 +143,7 @@ public partial class CameraRenderer
         //裁剪看不见的物体
         if (camera.TryGetCullingParameters(out ScriptableCullingParameters p))
         {
+            //选择最大阴影距离和摄像机远裁剪平面中的最小值
             p.shadowDistance = Mathf.Min(camera.farClipPlane,maxShadowDistance);
             cullingResults = context.Cull(ref p);
             return true;
